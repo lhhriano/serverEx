@@ -1,7 +1,8 @@
 import "./App.css";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import Input from "./Input";
 import Output from "./Output";
+import axios from "axios";
 
 const App = ()=>{
     // 전역변수를 state로 만들어 주어야 re rendering 된다.
@@ -9,6 +10,17 @@ const App = ()=>{
     const [name, setName] = useState("Todo List");
     const [todoList, setTodoLilst] = useState([]);
     const [noCnt, setNoCnt] = useState(105);
+
+    // useEffect()훅 - 렌더링 되는 것과 비동기로 작동한다.
+    // 최초 한번만 실행 됨.
+    // 훅은 콜백함수 내부에 포함 될수 없다.
+    // useEffect() 훅 내부에서 axios를 이용해서 처리.
+    // npm i -S axios
+    useEffect(()=>{
+        axios.get('http://localhost:5000/todo').then(function (response) {
+            setTodoLilst(response['data']);
+        });
+    }, []);
 
     const onClickEvent = (inputTitle) => {
         // 기존 내용에 새 내용을 추가 해서 새 배열을 생성
