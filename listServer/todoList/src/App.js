@@ -43,25 +43,32 @@ const App = ()=>{
         });
     };
 
-    const onDoneFlag = ({no, title, done})=>{
-        const newTodoList = [...todoList];
-        todoList.forEach((item, idx)=> {
-            if(item.no == no) {
-                newTodoList[idx].done = !done;
-            }
+    const onDoneFlag = (todoItem)=>{
+        // const newTodoList = [...todoList];
+        // todoList.forEach((item, idx)=> {
+        //     if(item.no == no) {
+        //         newTodoList[idx].done = !done;
+        //     }
+        // });
+        // setTodoLilst(newTodoList);
+        todoItem.done = !todoItem.done;
+        axios.put(serverURL, todoItem).then(function (response) {
+            setTodoLilst(response.data); // setTodoLilst(response['data']);
         });
-        setTodoLilst(newTodoList);
     };
 
-    const onEdit = ({no, title, done})=>{
-        const newTodoList = [...todoList];
-        todoList.forEach((item, idx)=> {
-            if(item.no == no) {
-                newTodoList[idx].done = done;
-                newTodoList[idx].title = title;
-            }
+    const onEdit = (todoItem)=>{
+        // const newTodoList = [...todoList];
+        // todoList.forEach((item, idx)=> {
+        //     if(item.no == no) {
+        //         newTodoList[idx].done = done;
+        //         newTodoList[idx].title = title;
+        //     }
+        // });
+        // setTodoLilst(newTodoList);
+        axios.put(serverURL, todoItem).then(function (response) {
+            setTodoLilst(response.data); // setTodoLilst(response['data']);
         });
-        setTodoLilst(newTodoList);
     };
 
     // 취소선 스타일 설정

@@ -15,10 +15,12 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
 // 데이터 임시 저장 배열
-const todoList = [{no:101, title:"공부하기(서버)", done: false},
+const todoList = [
+    {no:101, title:"공부하기(서버)", done: false},
     {no:102, title:"자바하기(서버)", done: true},
     {no:103, title:"리액트하기(서버)", done: false},
-    {no:104, title:"스프링하기(서버)", done: false}];
+    {no:104, title:"스프링하기(서버)", done: false}
+];
 let noCnt = 105;
 
 app.get("/todo", (req, res)=>{
@@ -40,6 +42,12 @@ app.post("/todo", (req, res)=>{
 
 app.put("/todo", (req, res)=>{
     // 할일 수정
+    const idx = todoList.findIndex((item) => {
+        return item.no === parseInt(req.body.no);
+    });
+    if(idx != -1) {
+        todoList[idx] = req.body;
+    }
     res.send(todoList);
 });
 
