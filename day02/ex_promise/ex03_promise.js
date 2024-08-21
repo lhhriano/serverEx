@@ -2,8 +2,8 @@ function task1(fullfill, reject) {
     console.log('Task1 시작');
     setTimeout(function() {
         console.log('Task1 끝');
-        //fullfill('Task1 결과');
-        reject('Error msg');
+        fullfill('성공');
+        reject('실패');
     }, 300);
     console.log('이 부분은 언제 실행될까1');
 }
