@@ -1,7 +1,8 @@
 var http = require('http');
 var server = http.createServer();
-server.listen(3000);
-console.log("http://localhost:3000");
+server.listen(3000, () => {
+    console.log("http://localhost:3000");
+});
 
 server.on('request', function(req, res){
     console.log('클라이언트 요청이 들어왔습니다.');
