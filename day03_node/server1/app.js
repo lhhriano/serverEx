@@ -3,6 +3,7 @@ const express = require("express");
 const app = express();
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const expressSession = require("express-session");
 
 app.set('port', 3000);
 app.set("views", "views");
@@ -14,6 +15,12 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 // 쿠키 사용 미들웨어 설정
 app.use(cookieParser());
+// 세션 미들웨어 등록
+app.use(expressSession({
+    secret: 'my key',
+    resave: true,
+    saveUninitialized: true
+}));
 
 const memberList = [
     {no:101, id:"user01", password:"1234", name:"홍길동", email:"hong@gmail.com"},
@@ -37,9 +44,16 @@ router.route("/profile").get((req,res)=> {
     });
 });
 router.route("/member").get((req,res)=> {
-    req.app.render("member/Member", {}, (err, html)=>{
-        res.end(html);
-    });
+    // 로그인이 되어 있다면 member 페이지를 보여준다.
+    // 쿠키는 사용자쪽에 전달(res), 세션은 요청 들어올때 생성(req)
+    if(req.session.user !== undefined) {
+        const user = req.session.user;
+        req.app.render("member/Member", {user}, (err, html)=>{
+            res.end(html);
+        });
+    } else {
+        res.redirect("/login");
+    }
 });
 router.route("/login").get((req,res)=> {
     req.app.render("member/Login", {}, (err, html)=>{
@@ -59,12 +73,19 @@ router.route("/login").post((req,res)=> {
         if(memberList[idx].password === req.body.password) {
             console.log("로그인 성공!");
             // 세션에 로그인 정보를 등록 후 멤버 페이지 이동
+            req.session.user = {
+                id: req.body.id,
+                name: memberList[idx].name,
+                email: memberList[idx].email, 
+                no: memberList[idx].no
+            }
+            res.redirect("/member");
         } else {
             console.log("로그인 실패!");
-            // 다시 로그인 페이지로 이동
+            // 다시 로그인 페이지로 다시 이동
+            res.redirect("/login");
         }
     }
-    res.redirect("/member");
 });
 router.route("/joinus").get((req,res)=> {
     // 회원 가입 ejs 페이지 forward
