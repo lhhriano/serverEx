@@ -105,7 +105,7 @@ const errorHandler = expressErrorHandler({
 app.use(expressErrorHandler.httpError(404) );
 app.use(errorHandler );
 
-// 서버 생성 및 실
+// 서버 생성 및 실행
 const server = http.createServer(app);
 server.listen(app.get('port'), ()=>{
     console.log(`Run on server >>> http://localhost:${app.get('port')}`);
