@@ -81,11 +81,29 @@ router.route("/login").post((req,res)=> {
             }
             res.redirect("/member");
         } else {
-            console.log("로그인 실패!");
+            console.log("로그인 실패! 패스워드가 맞지 않습니다.");
             // 다시 로그인 페이지로 다시 이동
             res.redirect("/login");
         }
+    } else {
+        console.log("존재하지 않는 계정입니다.");
+        res.redirect("/login");
     }
+});
+router.route("/logout").get((req, res)=>{
+    console.log("GET - /logout 호출 ...");
+    // 로그인 된 상태라면 로그아웃
+    if(!req.session.user) {
+        console.log("아직 로그인 전 상태입니다.");
+        res.redirect("/login");
+        return;
+    }
+    // 세션의 user 정보를 제거 해서 logout처리
+    req.session.destroy((err)=>{
+        if(err) throw err;
+        console.log("로그아웃 성공!");
+        res.redirect("/login");
+    });
 });
 router.route("/joinus").get((req,res)=> {
     // 회원 가입 ejs 페이지 forward
@@ -102,8 +120,34 @@ router.route("/gallery").get((req,res)=> {
         res.end(html);
     });
 });
+// ---- 쇼핑몰 기능
 router.route("/shop").get((req,res)=> {
     req.app.render("shop/Shop", {}, (err, html)=>{
+        res.end(html);
+    });
+});
+router.route("/shop/insert").get((req,res)=> {
+    req.app.render("shop/Insert", {}, (err, html)=>{
+        res.end(html);
+    });
+});
+router.route("/shop/modify").get((req,res)=> {
+    req.app.render("shop/Modify", {}, (err, html)=>{
+        res.end(html);
+    });
+});
+router.route("/shop/detail").get((req,res)=> {
+    req.app.render("shop/Detail", {}, (err, html)=>{
+        res.end(html);
+    });
+});
+router.route("/shop/delete").get((req,res)=> {
+    req.app.render("shop/Delete", {}, (err, html)=>{
+        res.end(html);
+    });
+});
+router.route("/shop/cart").get((req,res)=> {
+    req.app.render("shop/Cart", {}, (err, html)=>{
         res.end(html);
     });
 });
