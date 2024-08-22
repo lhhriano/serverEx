@@ -10,6 +10,29 @@
     <hr />
     <div class="container">
         <h2>상품 목록</h2>
+
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>NAME</th>
+                <th>PRICE</th>
+                <th>YEAR</th>
+                <th>COMPANY</th>
+            </tr>
+            <%
+            carList.forEact((car)=>{
+            %>
+            <tr>
+                <td><%=car._id %></td>
+                <td><%=car.name %></td>
+                <td><%=car.price %></td>
+                <td><%=car.year %></td>
+            </tr>
+            <%
+            })
+            %>
+        </table>
+
         <hr/>
         <%-include('./ShopNav.ejs') %>
     </div>

@@ -30,6 +30,17 @@ const memberList = [
 ];
 let noCnt = 105;
 
+//쇼핑몰 상품 목록
+const carList = [
+    {_id:1, name:'SM1', price:1000, year:1999, company:'gundo'},
+    {_id:2, name:'xm3', price:2000, year:2013, company:'SAnghun'},
+    {_id:3, name:'bmw', price:3000, year:2015, company:'youngjun'},
+    {_id:4, name:'sona', price:4000, year:2017, company:'sabin'},
+    {_id:5, name:'gv80', price:5000, year:2020, company:'maildb'},
+    {_id:6, name:'react', price:6000, year:2025, company:'mongodb'}
+];
+let carSeq = 7;
+
 // 요청 라운팅 사용
 const router = express.Router();
 
@@ -120,6 +131,7 @@ router.route("/gallery").get((req,res)=> {
         res.end(html);
     });
 });
+
 // ---- 쇼핑몰 기능
 router.route("/shop").get((req,res)=> {
     req.app.render("shop/Shop", {}, (err, html)=>{
@@ -142,9 +154,18 @@ router.route("/shop/detail").get((req,res)=> {
     });
 });
 router.route("/shop/delete").get((req,res)=> {
-    req.app.render("shop/Delete", {}, (err, html)=>{
-        res.end(html);
-    });
+    const _id = parseInt(req.query._id);
+    const idx = carList.findIndex(car => _id===car._id);
+    //상품이 있을때 ,,, res.query 쿼리로 넘어오는건 문자열
+    if(idx !== -1){
+        req.app.render("shop/Delete", {car:carList[idx]}, (err, html)=>{
+            res.end(html);
+        });
+    }else{
+        console.log("상품이 없다");
+        req.redirect("/shop");
+        return;
+    }
 });
 router.route("/shop/cart").get((req,res)=> {
     req.app.render("shop/Cart", {}, (err, html)=>{
