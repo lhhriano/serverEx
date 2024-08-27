@@ -1,3 +1,4 @@
+
 const http = require("http");
 const express = require("express");
 const app = express();
@@ -262,15 +263,42 @@ router.route("/shop/cart").get((req,res)=> {
 // app.get()은 ejs 뷰로 forward 시켜주기
 // app.post()은 DB와 연동해서 처리하는 process역할
 // forward란, 주소의 내용이 아닌 다른 파일의 내용 표시하는 것.
-const todoList = [
-    {_id:101, title:"밥먹기", done:false},
-    {_id:102, title:"잠자기", done:false},
-    {_id:103, title:"공부하기", done:false},
-    {_id:104, title:"친구랑 놀기", done:false}
-];
-let todoCnt = 105;
-app.get("/todo/list", (req,res)=>{
-    res.render("todolist/TodoList", {todoList});
+const { MongoClient } = require("mongodb");
+
+const client = new MongoClient("mongodb://localhost:27017");
+const dbName = "comstudy";
+const collectionName = "todolist";
+
+/* 몽고디비에 데이터 추가
+db.todolist.insertMany([
+{title:"밥먹기2", done:false},
+{title:"잠자기2", done:false},
+{title:"공부하기2", done:true},
+{title:"친구랑 놀기2", done:false}
+])
+*/
+app.get("/todo/list", async (req,res)=>{
+    //res.render("todolist/TodoList", {todoList});
+    try {
+        client.connect();
+        const database = client.db(dbName);
+        const todoCollection = database.collection(collectionName);
+        const QUERY = {};
+        const cursor = todoCollection.find(QUERY, {});
+        if ((await todoCollection.countDocuments(QUERY)) === 0) {
+          console.log("No documents found!");
+        }
+        const todoList = [];
+        for await (const doc of cursor) {
+            todoList.push(doc);
+        }
+        req.app.render("todolist/TodoList", {todoList}, (err, html)=>{
+            if(err) throw err;
+            res.end(html);
+        });
+      } finally {
+        await client.close();
+      }
 });
 app.get("/todo/input", (req,res)=>{
     res.render("todolist/TodoInput", {});
@@ -282,8 +310,22 @@ app.get("/todo/modify", (req,res)=>{
     res.render("todolist/TodoModify", {});
 });
 // 저장 처리 - 몽고디비와 연동
-app.post("/todo/input", (req,res)=>{
-    res.redirect("/todo/list");
+app.post("/todo/input", async (req,res)=>{
+    const doc = {
+        title: req.body.title,
+        done: (req.body.done=="true"?true:false)
+    }
+    console.dir(doc);
+    try {
+        client.connect();
+        const database = client.db(dbName);
+        const cars = database.collection(collectionName);
+        const result = await cars.insertOne(doc);
+        console.log(`A document was inserted with the _id: ${result.insertedId}`);
+        res.redirect("/todo/list");
+      } finally {
+        await client.close();
+      }
 });
 app.post("/todo/detail", (req,res)=>{
     res.redirect("/todo/list");

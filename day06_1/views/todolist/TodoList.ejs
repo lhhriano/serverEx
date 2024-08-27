@@ -21,7 +21,7 @@
         todoList.forEach((todo, index)=>{
     %>
             <tr>
-                <td><%= todo._id %></td>
+                <td><%= index %></td>
                 <td><%= todo.title %></td>
                 <td><a href="modify?_id=<%= todo._id %>">수정</a></td>
                 <td><a href="delete?_id=<%= todo._id %>">삭제</a></td>
