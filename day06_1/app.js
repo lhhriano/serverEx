@@ -366,7 +366,6 @@ app.post("/todo/modify", async (req,res)=>{
     } finally {
         await client.close();
       }
-    res.redirect("/todo/list");
 });
 app.get("/todo/delete", (req,res)=>{
     res.redirect("/todo/list");
