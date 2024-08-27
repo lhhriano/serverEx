@@ -9,7 +9,32 @@
     <%-include('../inc/Top.ejs') %>
     <hr />
     <div class="container">
-        <h2>TodoList</h2>
+    <h2>TodoList</h2>
+    <a href="input">입력</a> |
+    <a href="modify">수정</a> |
+    <a href="detail">상세보기</a>
+    <br/>
+
+    <table width="100%", border="1">
+        <tr>
+            <th>NO</th>
+            <th>TITLE</th>
+            <th>수정</th>
+            <th>삭제</th>
+        </tr>
+        <%
+            todoList.forEach((todo, index) => {
+        %>
+        <tr>
+            <th><%= todo._id %></th>
+            <th><%= todo.title %></th>
+            <th><a href="modify?_id=<%= todo._id %>">수정</a></th>
+            <th><a href="delete?_id=<%= todo._id %>">삭제</a></th>
+        </tr>        
+        <%
+            });
+        %>
+    </table>
     </div>
 </body>
 </html>
