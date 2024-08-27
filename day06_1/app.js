@@ -279,7 +279,7 @@ db.todolist.insertMany([
 app.get("/todo/list", async (req,res)=>{
     //res.render("todolist/TodoList", {todoList});
     try {
-        client.connect();
+        await client.connect();
         const database = client.db(dbName);
         const todoCollection = database.collection(collectionName);
         const QUERY = {};
@@ -333,7 +333,7 @@ app.post("/todo/input", async (req,res)=>{
     }
     console.dir(doc);
     try {
-        client.connect();
+        await client.connect();
         const database = client.db(dbName);
         const todoCollection = database.collection(collectionName);
         const result = await todoCollection.insertOne(doc);
@@ -349,7 +349,7 @@ app.post("/todo/detail", (req,res)=>{
 app.post("/todo/modify", async (req,res)=>{
     console.log(req.body._id);
     try {
-        client.connect();
+        await client.connect();
         const database = client.db(dbName);
         const movies = database.collection(collectionName);
         const filter = { _id: new ObjectId(req.body._id) };
@@ -362,12 +362,28 @@ app.post("/todo/modify", async (req,res)=>{
         };// Update the first document that matches the filter
         const result = await movies.updateOne(filter, updateDoc, options);
         console.log(`${result.matchedCount} document(s) matched the filter, updated ${result.modifiedCount} document(s)`,);
-        res.redirect("/todo/list");
+        //res.redirect("/todo/list");
     } finally {
         await client.close();
-      }
+    }
+    res.redirect("/todo/list");
 });
-app.get("/todo/delete", (req,res)=>{
+app.get("/todo/delete", async (req,res)=>{
+    try {
+        await client.connect();
+        const database = client.db(dbName);
+        const todos = database.collection(collectionName);
+        const query = { _id: new ObjectId(req.query._id) };
+        const result = await todos.deleteOne(query);
+        if (result.deletedCount === 1) {
+          console.log("Successfully deleted one document.");
+        } else {
+          console.log("No documents matched the query. Deleted 0 documents.");
+        }
+      } finally {
+        // Close the connection after the operation completes
+        await client.close();
+      }
     res.redirect("/todo/list");
 });
 // --- TodoList 기능 구현 끝
